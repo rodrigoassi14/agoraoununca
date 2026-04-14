@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Agora ou Nunca - 30 Dias de Treino</title>
+    <link rel="icon" href="assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        html {
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .text-gradient-red {
+            background: linear-gradient(90deg, #ff0000, #b30000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            transform: scale(1.05);
+        }
+        .card-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card-glass:hover {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+        .animate-pulse-custom {
+            animation: pulse-red 2s infinite;
+        }
+        /* Styles for Before/After Slider */
+        .ba-slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 1.5rem;
+        }
+        .ba-slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .ba-slider .after-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%; /* Initial state */
+            height: 100%;
+            overflow: hidden;
+        }
+        .ba-slider .slider-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%; /* Initial state */
+            width: 4px;
+            background: #ff0000;
+            cursor: ew-resize;
+            z-index: 10;
+        }
+        .ba-slider .slider-handle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        /* Styles for Quiz */
+        .quiz-option:checked + label {
+            border-color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        /* Styles for Workout Visualizer */
+        .workout-visualizer {
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background: #000;
+        }
+        .workout-timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff0000;
+        }
+
+        .expert-section {
+            background: #0a0a0a;
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 0;
+        }
+        .expert-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(255, 0, 0, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .expert-section > .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+        .expert-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+        .expert-mobile-image { display: none; }
+        .expert-mobile-image img {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto 24px;
+            border-radius: 12px;
+        }
+        .expert-info > span:first-child {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 16px;
+        }
+        .expert-info h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 24px;
+        }
+        .expert-section .text-red { color: #ff0000; }
+        .expert-info p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.78);
+            margin-bottom: 16px;
+        }
+        .expert-info strong {
+            color: #ffffff;
+            font-weight: 800;
+        }
+        .expert-credentials {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 24px 0 32px;
+        }
+        .credential-item {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.78);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-left: 3px solid rgba(255, 0, 0, 0.9);
+            border-radius: 0 10px 10px 0;
+            line-height: 1.4;
+        }
+        .expert-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1.1;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        @media (min-width: 1025px) {
+            .expert-section {
+                background-image: url('assets/secao-conheca-o-rodrigo-desktop.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+            .expert-section::before { content: none; }
+            .expert-grid {
+                grid-template-columns: 1fr;
+                justify-items: end;
+                min-height: clamp(520px, 55vw, 720px);
+            }
+            .expert-info { max-width: 560px; }
+        }
+        @media (max-width: 1024px) {
+            .expert-mobile-image { display: block; }
+            .expert-grid { grid-template-columns: 1fr; }
+            .expert-info { margin: 0 auto; text-align: left; }
+        }
+        @media (max-width: 480px) {
+            .expert-section { padding: 4.5rem 0; }
+            .expert-section > .container { padding: 0 20px; }
+            .expert-stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar Minimalista -->
+    <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <img src="https://i.imgur.com/qZNa3il.png" alt="Agora ou Nunca Logo" class="h-10 md:h-12">
+            <a href="#preço" class="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-black py-2 px-4 sm:px-6 rounded-full transition-all text-sm md:text-base whitespace-nowrap leading-none">
+                <span class="hidden sm:inline">QUERO COMEÇAR AGORA</span>
+                <span class="sm:hidden">QUERO COMEÇAR</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-red-600/10 blur-[120px] rounded-full -mr-24 -mt-24"></div>
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="order-2 md:order-1 text-left min-w-0">
+                <span class="inline-block bg-red-600/20 text-red-500 border border-red-600/30 px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6 uppercase">
+                    Vagas Limitadas - Turma Aberta
+                </span>
+                <h1 class="text-5xl md:text-7xl font-black leading-tight mb-6">
+                    CHEGA DE DESCULPAS É AGORA OU NUNCA
+                </h1>
+                <p class="text-xl text-gray-400 mb-10 leading-relaxed max-w-lg">
+                    A rotina pesa, o cansaço bate e as desculpas surgem. O método do treinador <span class="text-white font-bold">Rodrigo Assi</span> foi criado para você que quer parar de tentar e começar a <span class="text-white font-bold">conquistar</span> o corpo que sempre sonhou.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#preço" class="btn-glow animate-pulse-custom bg-red-600 text-white font-black text-base sm:text-lg py-4 sm:py-5 px-6 sm:px-10 rounded-xl text-center transition-all w-full sm:w-auto max-w-full">
+                        INSCREVA-SE NO TIME
+                    </a>
+                </div>
+                <div class="mt-8 flex items-center gap-4 text-sm text-gray-500">
+                    <div class="flex -space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-gray-800 border border-black flex items-center justify-center text-[10px]">+5k</div>
+                    </div>
+                    <span>Junte-se a milhares de alunos que já aceitaram o desafio.</span>
+                </div>
+            </div>
+            <div class="order-1 md:order-2 flex justify-center relative min-w-0">
+                <div class="absolute inset-0 bg-red-600/20 blur-[100px] animate-pulse"></div>
+                <img src="https://i.imgur.com/qZNa3il.png" alt="Logo Challenge" class="relative z-10 w-full max-w-[450px] drop-shadow-[0_35px_35px_rgba(255,0,0,0.25)] hover:scale-105 transition-transform duration-500">
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE DOR E DESEJO -->
+    <section class="py-20 bg-white text-black px-6">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="text-3xl md:text-5xl font-black mb-10">SABEMOS QUE MANTER O FOCO NEM SEMPRE É FÁCIL...</h2>
+            <p class="text-lg md:text-xl text-gray-600 mb-12">
+                A rotina pesa, o cansaço bate, as sobrecargas do dia a dia atrapalham. Mas com dedicação, disciplina e o <span class="text-red-600 font-bold underline">método certo</span>, o resultado vem. Imagina poder olhar no espelho e voltar a se admirar?
+            </p>
+            <div class="grid md:grid-cols-3 gap-8 text-left">
+                <div class="p-6 border-l-4 border-red-600 bg-gray-50">
+                    <i data-lucide="shield-alert" class="text-red-600 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Sem tempo?</h4>
+                    <p class="text-sm text-gray-500">Treinos rápidos e eficientes que cabem na sua rotina caótica.</p>
+                </div>
+                <div class="p-6 border-l-4 border-red-600 bg-gray-50">
+                    <i data-lucide="zap-off" class="text-red-600 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Falta de ânimo?</h4>
+                    <p class="text-sm text-gray-500">Um grupo exclusivo para te manter motivado todos os dias.</p>
+                </div>
+                <div class="p-6 border-l-4 border-red-600 bg-gray-50">
+                    <i data-lucide="target" class="text-red-600 mb-4"></i>
+                    <h4 class="font-bold text-lg mb-2">Sem direção?</h4>
+                    <p class="text-sm text-gray-500">Um passo a passo completo do dia 1 ao dia 30.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUIZ INTERATIVO -->
+    <section class="py-24 px-6 relative overflow-hidden bg-zinc-900 border-y border-white/5">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <span class="text-red-600 font-bold uppercase tracking-widest text-sm">Descubra se o desafio é para você</span>
+            <h2 class="text-3xl md:text-5xl font-black mb-8 mt-2">VOCÊ ESTÁ PRONTO PARA MUDAR?</h2>
+            <p class="text-gray-400 mb-12">Responda a estas 3 perguntas rápidas e veja se o Time Agora ou Nunca é a solução que você precisa.</p>
+            
+            <div id="quiz-container" class="card-glass p-8 md:p-12 rounded-3xl text-left max-w-2xl mx-auto">
+                <!-- Pergunta 1 -->
+                <div class="quiz-question active" data-question="1">
+                    <h3 class="text-xl font-bold mb-6">1. Qual é o seu maior obstáculo hoje?</h3>
+                    <div class="space-y-4">
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q1a1" name="q1" class="hidden quiz-option">
+                            <label for="q1a1" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="clock" class="text-red-600"></i>
+                                <span>Falta de tempo para treinar.</span>
+                            </label>
+                        </div>
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q1a2" name="q1" class="hidden quiz-option">
+                            <label for="q1a2" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="frown" class="text-red-600"></i>
+                                <span>Desmotivação e falta de constância.</span>
+                            </label>
+                        </div>
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q1a3" name="q1" class="hidden quiz-option">
+                            <label for="q1a3" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="help-circle" class="text-red-600"></i>
+                                <span>Não saber o que fazer na academia.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pergunta 2 -->
+                <div class="quiz-question hidden" data-question="2">
+                    <h3 class="text-xl font-bold mb-6">2. Como você se sente ao se olhar no espelho?</h3>
+                    <div class="space-y-4">
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q2a1" name="q2" class="hidden quiz-option">
+                            <label for="q2a1" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="meh" class="text-red-600"></i>
+                                <span>Insatisfeito(a) e querendo mudar.</span>
+                            </label>
+                        </div>
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q2a2" name="q2" class="hidden quiz-option">
+                            <label for="q2a2" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="smile" class="text-red-600"></i>
+                                <span>Ok, mas poderia estar melhor.</span>
+                            </label>
+                        </div>
+                         <div class="quiz-option-container">
+                            <input type="radio" id="q2a3" name="q2" class="hidden quiz-option">
+                            <label for="q2a3" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="thumbs-down" class="text-red-600"></i>
+                                <span>Evito me olhar, minha autoestima está baixa.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pergunta 3 -->
+                <div class="quiz-question hidden" data-question="3">
+                    <h3 class="text-xl font-bold mb-6">3. Você está disposto(a) a se dedicar por 30 dias?</h3>
+                    <div class="space-y-4">
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q3a1" name="q3" class="hidden quiz-option">
+                            <label for="q3a1" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="check-circle-2" class="text-red-600"></i>
+                                <span>Sim, estou 100% comprometido(a)!</span>
+                            </label>
+                        </div>
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q3a2" name="q3" class="hidden quiz-option">
+                            <label for="q3a2" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="help-circle" class="text-red-600"></i>
+                                <span>Talvez, se o método for bom.</span>
+                            </label>
+                        </div>
+                        <div class="quiz-option-container">
+                            <input type="radio" id="q3a3" name="q3" class="hidden quiz-option">
+                            <label for="q3a3" class="block w-full p-4 border border-white/20 rounded-xl cursor-pointer hover:border-red-600/50 transition-all flex items-center gap-4">
+                                <i data-lucide="x-circle" class="text-red-600"></i>
+                                <span>Não tenho certeza se consigo.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Resultado -->
+                <div class="quiz-result hidden text-center">
+                    <i data-lucide="target" class="w-20 h-20 text-red-600 mx-auto mb-6"></i>
+                    <h3 class="text-2xl font-black mb-4">O DESAFIO É PARA VOCÊ!</h3>
+                    <p class="text-gray-300 mb-8">Suas respostas indicam que você precisa de um método estruturado, motivação constante e resultados rápidos. O Time Agora ou Nunca foi feito para resolver EXATAMENTE os seus problemas.</p>
+                    <a href="#preço" class="btn-glow bg-red-600 hover:bg-red-700 text-white font-black py-3 px-6 sm:py-4 sm:px-8 rounded-2xl transition-all uppercase tracking-wide text-sm sm:text-base inline-block w-full sm:w-auto">
+                        QUERO ENTRAR NO TIME
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 relative overflow-hidden bg-black">
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-red-600/10 blur-[90px] rounded-full"></div>
+        <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-red-600/10 blur-[90px] rounded-full"></div>
+
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-14 reveal">
+                <h2 class="text-4xl md:text-6xl font-black leading-tight">
+                    A VERDADE <span class="text-white">DÓI.</span><br>
+                    <span class="text-gray-600">MAS IGNORÁ-LA DÓI MAIS.</span>
+                </h2>
+                <p class="text-gray-400 mt-6 max-w-3xl mx-auto text-lg leading-relaxed">
+                    Se você se reconhece em pelo menos 1 ponto abaixo, você não precisa de mais motivação.
+                    Você precisa de um <span class="text-white font-bold">plano</span> e de um <span class="text-white font-bold">método</span>.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 reveal">
+                <div class="card-glass p-8 rounded-3xl">
+                    <div class="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-red-600/20">
+                        <i data-lucide="battery-low" class="text-red-600"></i>
+                    </div>
+                    <h3 class="text-white font-black uppercase tracking-widest text-sm mb-3">Cansaço Crônico</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Acordar sem energia já virou o seu normal. Você se arrasta durante o dia, sem disposição para nada.
+                    </p>
+                </div>
+
+                <div class="card-glass p-8 rounded-3xl">
+                    <div class="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-red-600/20">
+                        <i data-lucide="calendar-clock" class="text-red-600"></i>
+                    </div>
+                    <h3 class="text-white font-black uppercase tracking-widest text-sm mb-3">Sempre Segunda-Feira</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        “Semana que vem eu começo de verdade”. E a semana nunca vem. Anos de promessas quebradas.
+                    </p>
+                </div>
+
+                <div class="card-glass p-8 rounded-3xl">
+                    <div class="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-red-600/20">
+                        <i data-lucide="scan-face" class="text-red-600"></i>
+                    </div>
+                    <h3 class="text-white font-black uppercase tracking-widest text-sm mb-3">Frustração no Espelho</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Evitar fotos, escolher roupas largas, não reconhecer o próprio corpo. Isso vai longe demais.
+                    </p>
+                </div>
+
+                <div class="card-glass p-8 rounded-3xl">
+                    <div class="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-red-600/20">
+                        <i data-lucide="help-circle" class="text-red-600"></i>
+                    </div>
+                    <h3 class="text-white font-black uppercase tracking-widest text-sm mb-3">Sem Método</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Tentou academia, apps, dietas aleatórias. Nada funcionou porque faltava orientação de nível profissional.
+                    </p>
+                </div>
+
+                <div class="card-glass p-8 rounded-3xl">
+                    <div class="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-red-600/20">
+                        <i data-lucide="brain" class="text-red-600"></i>
+                    </div>
+                    <h3 class="text-white font-black uppercase tracking-widest text-sm mb-3">Sobrecarga Mental</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        A rotina pesa. Trabalho, família, responsabilidades — e você vai ficando para o último lugar da fila.
+                    </p>
+                </div>
+
+                <div class="card-glass p-8 rounded-3xl">
+                    <div class="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-red-600/20">
+                        <i data-lucide="timer" class="text-red-600"></i>
+                    </div>
+                    <h3 class="text-white font-black uppercase tracking-widest text-sm mb-3">O Tempo Passa</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Cada ano que passa é mais difícil. O corpo cobra. A saúde cobra. E você sabe disso.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 relative overflow-hidden bg-zinc-900 border-y border-white/5" id="jornada">
+        <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-red-600/10 blur-[120px] rounded-full"></div>
+
+        <div class="max-w-5xl mx-auto text-center reveal relative">
+            <h2 class="text-4xl md:text-6xl font-black mb-4">
+                SUA JORNADA DE <span class="">30 DIAS</span>
+            </h2>
+            <p class="text-gray-400 mb-12">Clique em cada semana para ver a progressão.</p>
+
+            <div class="flex flex-wrap justify-center gap-3 mb-10">
+                <button type="button" class="journey-tab bg-red-600 text-white border border-red-500 font-black py-3 px-6 rounded-xl text-sm uppercase tracking-widest" data-week="1">
+                    Semana 1
+                </button>
+                <button type="button" class="journey-tab bg-black/40 text-gray-300 border border-white/10 font-black py-3 px-6 rounded-xl text-sm uppercase tracking-widest hover:border-red-600/40 transition-colors" data-week="2">
+                    Semana 2
+                </button>
+                <button type="button" class="journey-tab bg-black/40 text-gray-300 border border-white/10 font-black py-3 px-6 rounded-xl text-sm uppercase tracking-widest hover:border-red-600/40 transition-colors" data-week="3">
+                    Semana 3
+                </button>
+                <button type="button" class="journey-tab bg-black/40 text-gray-300 border border-white/10 font-black py-3 px-6 rounded-xl text-sm uppercase tracking-widest hover:border-red-600/40 transition-colors" data-week="4">
+                    Semana 4
+                </button>
+            </div>
+
+            <div class="card-glass p-8 md:p-12 rounded-3xl max-w-3xl mx-auto text-left">
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
+                    <div class="min-w-0">
+                        <div class="text-red-600 font-black uppercase tracking-widest text-xs" id="journey-days">Dias 1–7</div>
+                        <div class="text-2xl sm:text-3xl md:text-4xl font-black mt-2 uppercase break-words leading-tight" id="journey-title">Ativação</div>
+                    </div>
+                    <div class="text-left sm:text-right flex-shrink-0">
+                        <div class="text-gray-500 text-xs uppercase tracking-widest mb-2">Progresso</div>
+                        <div class="text-white font-black text-xl" id="journey-percent">25%</div>
+                    </div>
+                </div>
+
+                <p class="text-gray-300 leading-relaxed mb-10" id="journey-desc">
+                    Adaptação ao método, ativação muscular e construção do hábito. Seu corpo começa a despertar.
+                </p>
+
+                <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-red-600 rounded-full transition-all duration-500" id="journey-bar" style="width: 25%;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- O QUE VOCÊ TERÁ ACESSO (INTERATIVO ESTILO APP) -->
+    <section class="py-24 px-6 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl md:text-6xl font-black mb-4">DENTRO DO <span class="">TIME</span></h2>
+                <p class="text-gray-400">Tudo o que você precisa em um só lugar, na palma da sua mão.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+                <!-- Card 1 -->
+                <div class="card-glass p-8 rounded-3xl group">
+                    <div class="bg-red-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 transition-colors">
+                        <i data-lucide="calendar-check" class="text-red-600 group-hover:text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">30 Treinos Prontos</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Um treino por dia, pensado na sua evolução constante sem sobrecarga desnecessária.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card-glass p-8 rounded-3xl group">
+                    <div class="bg-red-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 transition-colors">
+                        <i data-lucide="file-text" class="text-red-600 group-hover:text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Ficha de Treino</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Organização impecável para você saber exatamente o que fazer, quantas vezes e como.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card-glass p-8 rounded-3xl group">
+                    <div class="bg-red-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 transition-colors">
+                        <i data-lucide="video" class="text-red-600 group-hover:text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Vídeo Explicativo</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Aulas detalhadas explicando a técnica correta para evitar lesões e maximizar ganhos.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="card-glass p-8 rounded-3xl group">
+                    <div class="bg-red-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 transition-colors">
+                        <i data-lucide="play-circle" class="text-red-600 group-hover:text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Vídeo na Prática</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Siga o mestre! Treine junto com o Rodrigo Assi visualizando cada movimento em tempo real.</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="card-glass p-8 rounded-3xl group">
+                    <div class="bg-red-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 transition-colors">
+                        <i data-lucide="smartphone" class="text-red-600 group-hover:text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">App de Acompanhamento</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Tecnologia a seu favor. Monitore seu progresso e bata suas metas direto no seu celular.</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="card-glass p-8 rounded-3xl group">
+                    <div class="bg-red-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-red-600 transition-colors">
+                        <i data-lucide="send" class="text-red-600 group-hover:text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Grupo Exclusivo</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Comunidade no Telegram para troca de experiências, dúvidas e motivação extra.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="expert-section" id="expert">
+        <div class="container">
+            <div class="expert-grid animate-on-scroll">
+                <div class="expert-info">
+                    <div class="expert-mobile-image">
+                        <img src="assets/secao-conheca-o-rodrigo-mobile.png" alt="">
+                    </div>
+                    <span>Seu mentor</span>
+                    <h2>Conheça <span class="">Rodrigo Assi</span></h2>
+                    <p>
+                        Rodrigo Assi é Personal Trainer há <strong>22 anos</strong>, palestrante há <strong>17 anos</strong> e já
+                        capacitou <strong>mais de 20 mil profissionais</strong> em mais de 270 cursos pelo Brasil. É fundador do
+                        <strong>Personal na Prática</strong> e criador do sistema de treinamento <strong>Power 6/1</strong>.
+                    </p>
+                    <p>
+                        Especialista com quatro pós-graduações — em Treinamento Desportivo, Biomecânica, Fisiologia do Exercício e
+                        Fisioterapia no Esporte — e ex-preparador físico do <strong>Ji-Paraná Futebol Club</strong>, onde conquistou
+                        o Campeonato Rondoniense invicto e classificação histórica para a Copa do Brasil.
+                    </p>
+                    <p>
+                        Foi eleito <strong>Treinador do Ano pela FIEP em 2014</strong> — o maior congresso
+                        internacional de Educação Física — e integrou o corpo docente do evento por 10 anos consecutivos.
+                    </p>
+                    <p>
+                        Sua missão é clara: <strong>fazer o personal parar de tratar sua profissão como bico e
+                            construir um negócio lucrativo e sustentável.</strong>
+                    </p>
+
+                    <div class="expert-credentials">
+                        <div class="credential-item">🎓 Licenciatura Plena em Educação Física — FEFISA (2004)</div>
+                        <div class="credential-item">📚 4 Pós-Graduações — Gama Filho &amp; Wanderley Luxemburgo</div>
+                        <div class="credential-item">⚽ Preparador Físico — Ji-Paraná FC (Campeão Rondoniense)</div>
+                        <div class="credential-item">🏆 Treinador do Ano — FIEP 2014</div>
+                        <div class="credential-item">📋 CREF 004242-G/RO</div>
+                    </div>
+                    <div class="expert-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">20mil+</div>
+                            <div class="stat-label">profissionais capacitados</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">22</div>
+                            <div class="stat-label">anos como Personal</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">270+</div>
+                            <div class="stat-label">cursos pelo Brasil</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OFERTA FINAL -->
+    <section id="preço" class="py-24 px-6 relative">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="bg-black border-2 border-red-600 rounded-[40px] p-8 md:p-16 relative overflow-hidden reveal">
+                <!-- Background decorativo -->
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-red-600/10 blur-[80px] rounded-full"></div>
+                
+                <h2 class="text-3xl md:text-5xl font-black mb-4">CHEGOU O SEU <br><span class="">AGORA OU NUNCA</span></h2>
+                <p class="text-gray-400 mb-10 uppercase tracking-[4px] font-bold">Inscrições abertas por tempo limitado</p>
+
+                <div class="flex flex-col md:flex-row items-center justify-center gap-12 mb-12">
+                    <div class="text-left">
+                        <p class="text-gray-500 line-through text-xl">De R$ 997,00</p>
+                        <p class="text-gray-400 mb-2 font-bold">Por apenas:</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-2xl font-bold">12x</span>
+                            <span class="text-5xl md:text-8xl font-black text-red-600">R$62,05</span>
+                        </div>
+                        <p class="text-gray-400 mt-2">Ou R$ 600,00 à vista no PIX</p>
+                    </div>
+                    <div class="hidden md:block w-px h-32 bg-white/10"></div>
+                    <div class="space-y-3 text-left">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="shield-check" class="text-green-500 w-5 h-5"></i>
+                            <span class="text-sm">7 dias de garantia incondicional</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="zap" class="text-yellow-500 w-5 h-5"></i>
+                            <span class="text-sm">Acesso imediato após confirmação</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="lock" class="text-blue-500 w-5 h-5"></i>
+                            <span class="text-sm">Pagamento 100% Seguro</span>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="https://pay.hotmart.com/H105273549D?off=yjeuih0e&checkoutMode=10" target="_blank" class="block w-full btn-glow bg-red-600 hover:bg-red-700 text-white font-black text-2xl py-6 rounded-2xl transition-all uppercase tracking-widest">
+                    QUERO ENTRAR PARA O TIME
+                </a>
+                
+                <p class="mt-8 text-xs text-gray-500">Ao clicar, você será redirecionado para a página de pagamento seguro.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 relative overflow-hidden bg-black border-y border-white/5" id="faq">
+        <div class="absolute -top-24 -left-24 w-72 h-72 bg-red-600/10 blur-[90px] rounded-full"></div>
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl md:text-5xl font-black mb-4 uppercase tracking-tight">
+                    Perguntas <span class="text-red-600">Frequentes</span>
+                </h2>
+            </div>
+
+            <div class="space-y-4 reveal" id="faq-accordion">
+                <details class="card-glass rounded-2xl overflow-hidden group">
+                    <summary class="cursor-pointer select-none px-6 py-5 flex items-center justify-between gap-4">
+                        <span class="font-black text-white">Preciso ter experiência com treino?</span>
+                        <span class="text-red-600 group-open:rotate-180 transition-transform">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-300 leading-relaxed">
+                        Não. O desafio foi pensado para te guiar com método, ficha e vídeos explicativos. Você vai saber exatamente o que fazer e como executar com segurança.
+                    </div>
+                </details>
+
+                <details class="card-glass rounded-2xl overflow-hidden group">
+                    <summary class="cursor-pointer select-none px-6 py-5 flex items-center justify-between gap-4">
+                        <span class="font-black text-white">Preciso de academia?</span>
+                        <span class="text-red-600 group-open:rotate-180 transition-transform">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-300 leading-relaxed">
+                        Dá para fazer com academia ou em casa (adaptando). O importante é seguir o plano e manter a constância por 30 dias.
+                    </div>
+                </details>
+
+                <details class="card-glass rounded-2xl overflow-hidden group">
+                    <summary class="cursor-pointer select-none px-6 py-5 flex items-center justify-between gap-4">
+                        <span class="font-black text-white">Quanto tempo dura cada treino?</span>
+                        <span class="text-red-600 group-open:rotate-180 transition-transform">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-300 leading-relaxed">
+                        Em média de 30 a 45 minutos (pode variar). O foco é eficiência: treinos diretos, objetivos e com progressão.
+                    </div>
+                </details>
+
+                <details class="card-glass rounded-2xl overflow-hidden group">
+                    <summary class="cursor-pointer select-none px-6 py-5 flex items-center justify-between gap-4">
+                        <span class="font-black text-white">Vou ter suporte durante o desafio?</span>
+                        <span class="text-red-600 group-open:rotate-180 transition-transform">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-300 leading-relaxed">
+                        Sim. Você participa de um grupo exclusivo no Telegram para motivação, avisos e acompanhamento.
+                    </div>
+                </details>
+
+                <details class="card-glass rounded-2xl overflow-hidden group">
+                    <summary class="cursor-pointer select-none px-6 py-5 flex items-center justify-between gap-4">
+                        <span class="font-black text-white">E se eu não conseguir acompanhar?</span>
+                        <span class="text-red-600 group-open:rotate-180 transition-transform">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-gray-300 leading-relaxed">
+                        O plano é diário e guiado, mas a vida real acontece. O que importa é não quebrar o ciclo: voltou? Continua. O método existe para te manter em movimento.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 relative overflow-hidden bg-zinc-900">
+        <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-red-600/10 blur-[120px] rounded-full"></div>
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <img src="https://i.imgur.com/qZNa3il.png" alt="Agora ou Nunca" class="h-14 mx-auto mb-8 opacity-90">
+            <h2 class="text-4xl md:text-6xl font-black leading-tight uppercase">
+                A Decisão é sua.<br>
+                <span class="text-red-600">Agora ou Nunca.</span>
+            </h2>
+            <p class="text-gray-400 mt-6 text-lg leading-relaxed max-w-2xl mx-auto">
+                Daqui a 30 dias você pode estar exatamente onde está agora… ou pode estar vivendo a sua melhor versão.
+                Qual vai ser?
+            </p>
+            <div class="mt-10">
+                <a href="#preço" class="inline-flex items-center justify-center gap-2 btn-glow bg-red-600 hover:bg-red-700 text-white font-black py-4 px-8 rounded-2xl transition-all uppercase tracking-widest text-sm sm:text-base">
+                    EU ESCOLHO MUDAR AGORA
+                    <i data-lucide="flame" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 border-t border-white/5 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <img src="https://i.imgur.com/qZNa3il.png" alt="Logo" class="h-8 opacity-50">
+            <p class="text-gray-600 text-sm">© 2026 Entre para o Time Agora ou Nunca - Todos os direitos reservados.</p>
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-600 hover:text-white transition-colors"><i data-lucide="instagram"></i></a>
+                <a href="#" class="text-gray-600 hover:text-white transition-colors"><i data-lucide="facebook"></i></a>
+                <a href="#" class="text-gray-600 hover:text-white transition-colors"><i data-lucide="youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Inicializar ícones
+        lucide.createIcons();
+
+        // Animação de Reveal no Scroll
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+
+        window.addEventListener("scroll", reveal);
+        // Chamar uma vez no load
+        window.onload = reveal;
+
+        // Smooth scroll para âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Lógica do Quiz
+        const quizQuestions = document.querySelectorAll('.quiz-question');
+        const quizResult = document.querySelector('.quiz-result');
+        const quizOptions = document.querySelectorAll('.quiz-option');
+
+        quizOptions.forEach(option => {
+            option.addEventListener('change', function() {
+                const currentQuestion = this.closest('.quiz-question');
+                const nextQuestionId = parseInt(currentQuestion.dataset.question) + 1;
+                const nextQuestion = document.querySelector(`.quiz-question[data-question="${nextQuestionId}"]`);
+
+                setTimeout(() => {
+                    currentQuestion.classList.add('hidden');
+                    currentQuestion.classList.remove('active');
+                    
+                    if (nextQuestion) {
+                        nextQuestion.classList.remove('hidden');
+                        nextQuestion.classList.add('active');
+                    } else {
+                        quizResult.classList.remove('hidden');
+                    }
+                }, 500);
+            });
+        });
+
+        const journeyData = {
+            1: {
+                days: 'Dias 1–7',
+                title: 'Ativação',
+                desc: 'Adaptação ao método, ativação muscular e construção do hábito. Seu corpo começa a despertar.',
+                percent: 25
+            },
+            2: {
+                days: 'Dias 8–14',
+                title: 'Consistência',
+                desc: 'Você entra no ritmo. Mais domínio da execução, mais foco e menos desculpas. Agora começa a ficar sério.',
+                percent: 50
+            },
+            3: {
+                days: 'Dias 15–21',
+                title: 'Aceleração',
+                desc: 'O corpo responde. Intensidade maior, evolução visível e o desafio vira compromisso. Você não quer mais parar.',
+                percent: 75
+            },
+            4: {
+                days: 'Dias 22–30',
+                title: 'Transformação',
+                desc: 'Lapidação final. Você prova para si mesmo que consegue. Resultado no espelho e na autoestima.',
+                percent: 100
+            }
+        };
+
+        const journeyTabs = document.querySelectorAll('.journey-tab');
+        const journeyDays = document.getElementById('journey-days');
+        const journeyTitle = document.getElementById('journey-title');
+        const journeyDesc = document.getElementById('journey-desc');
+        const journeyPercent = document.getElementById('journey-percent');
+        const journeyBar = document.getElementById('journey-bar');
+
+        function setJourneyWeek(week) {
+            const data = journeyData[week];
+            if (!data) return;
+
+            journeyDays.textContent = data.days;
+            journeyTitle.textContent = data.title;
+            journeyDesc.textContent = data.desc;
+            journeyPercent.textContent = `${data.percent}%`;
+            journeyBar.style.width = `${data.percent}%`;
+
+            journeyTabs.forEach(btn => {
+                const isActive = btn.dataset.week === String(week);
+                btn.classList.toggle('bg-red-600', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('border-red-500', isActive);
+
+                btn.classList.toggle('bg-black/40', !isActive);
+                btn.classList.toggle('text-gray-300', !isActive);
+                btn.classList.toggle('border-white/10', !isActive);
+            });
+        }
+
+        journeyTabs.forEach(btn => {
+            btn.addEventListener('click', () => setJourneyWeek(btn.dataset.week));
+        });
+
+        // Lógica do Slider Antes/Depois
+        const sliders = document.querySelectorAll('.ba-slider');
+        sliders.forEach(slider => {
+            const afterImage = slider.querySelector('.after-image');
+            const handle = slider.querySelector('.slider-handle');
+            
+            slider.addEventListener('mousemove', function(e) {
+                const sliderRect = slider.getBoundingClientRect();
+                const position = ((e.clientX - sliderRect.left) / sliderRect.width) * 100;
+                
+                afterImage.style.width = `${position}%`;
+                handle.style.left = `${position}%`;
+            });
+
+             slider.addEventListener('touchmove', function(e) {
+                const sliderRect = slider.getBoundingClientRect();
+                const position = ((e.touches[0].clientX - sliderRect.left) / sliderRect.width) * 100;
+                
+                afterImage.style.width = `${position}%`;
+                handle.style.left = `${position}%`;
+            });
+        });
+    </script>
+</body>
+</html>
