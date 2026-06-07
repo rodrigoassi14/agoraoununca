@@ -42,6 +42,8 @@
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cta-rodape-whatsapp/styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         html {
@@ -103,74 +105,10 @@
         .animate-pulse-custom {
             animation: pulse-red 2s infinite;
         }
-        /* Styles for Before/After Slider */
-        .ba-slider {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            border-radius: 1.5rem;
-        }
-        .ba-slider img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .ba-slider .after-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%; /* Initial state */
-            height: 100%;
-            overflow: hidden;
-        }
-        .ba-slider .slider-handle {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%; /* Initial state */
-            width: 4px;
-            background: #ff0000;
-            cursor: ew-resize;
-            z-index: 10;
-        }
-        .ba-slider .slider-handle::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: #ff0000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
         /* Styles for Quiz */
         .quiz-option:checked + label {
             border-color: #ff0000;
             background: rgba(255, 0, 0, 0.1);
-        }
-        /* Styles for Workout Visualizer */
-        .workout-visualizer {
-            position: relative;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            background: #000;
-        }
-        .workout-timer {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ff0000;
         }
 
         .expert-section {
@@ -313,9 +251,19 @@
 
     <!-- Header / Navbar Minimalista -->
     <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <img src="https://i.imgur.com/g4GjNcw.png" alt="Agora ou Nunca Logo" class="h-10 md:h-12">
-            <a href="#preço" class="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-black py-2 px-4 sm:px-6 rounded-full transition-all text-sm md:text-base whitespace-nowrap leading-none">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-6">
+            <a href="#inicio" class="flex items-center flex-shrink-0">
+                <img src="https://i.imgur.com/g4GjNcw.png" alt="Agora ou Nunca Logo" class="h-10 md:h-12">
+            </a>
+
+            <div class="hidden md:flex items-center justify-center gap-6 text-sm font-bold tracking-wide text-gray-300">
+                <a href="#jornada" class="hover:text-white transition-colors">Jornada</a>
+                <a href="#expert" class="hover:text-white transition-colors">Mentor</a>
+                <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+                <a href="#contato" class="hover:text-white transition-colors">Contato</a>
+            </div>
+
+            <a href="#preço" class="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-black py-2 px-4 sm:px-6 rounded-full transition-all text-sm md:text-base whitespace-nowrap leading-none flex-shrink-0">
                 <span class="hidden sm:inline">QUERO COMEÇAR AGORA</span>
                 <span class="sm:hidden">QUERO COMEÇAR</span>
             </a>
@@ -323,7 +271,7 @@
     </nav>
 
     <!-- HERO SECTION -->
-    <section class="hero-section relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden">
+    <section id="inicio" class="hero-section relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden scroll-mt-28">
         <div class="absolute top-0 right-0 w-1/2 h-full bg-red-600/10 blur-[120px] rounded-full -mr-24 -mt-24 z-10"></div>
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-20">
             <div class="order-2 md:order-1 text-left min-w-0">
@@ -351,6 +299,31 @@
             <div class="order-1 md:order-2 flex justify-center relative min-w-0">
                 <div class="absolute inset-0 bg-red-600/20 blur-[100px] animate-pulse"></div>
                 <img src="https://i.imgur.com/g4GjNcw.png" alt="Logo Challenge" class="relative z-10 w-full max-w-[450px] drop-shadow-[0_35px_35px_rgba(255,0,0,0.25)] hover:scale-105 transition-transform duration-500">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 bg-black border-y border-white/5">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-10 reveal">
+                <h2 class="text-3xl md:text-5xl font-black">ASSISTA E ENTENDA O DESAFIO</h2>
+                <p class="text-gray-400 mt-4 max-w-3xl mx-auto">
+                    Dê o play e veja como funciona na prática.
+                </p>
+            </div>
+
+            <div class="card-glass p-4 sm:p-6 rounded-3xl reveal">
+                <div class="relative w-full pt-[56.25%] overflow-hidden rounded-2xl bg-black">
+                    <iframe
+                        class="absolute inset-0 w-full h-full"
+                        src="https://www.youtube.com/embed/Mfv2Tv4tsJ0?rel=0"
+                        title="Desafio Agora ou Nunca"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        referrerpolicy="strict-origin-when-cross-origin"
+                    ></iframe>
+                </div>
             </div>
         </div>
     </section>
@@ -564,7 +537,7 @@
         </div>
     </section>
 
-    <section class="py-24 px-6 relative overflow-hidden bg-zinc-900 border-y border-white/5" id="jornada">
+    <section class="py-24 px-6 relative overflow-hidden bg-zinc-900 border-y border-white/5 scroll-mt-28" id="jornada">
         <div class="absolute -top-28 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-red-600/10 blur-[120px] rounded-full"></div>
 
         <div class="max-w-5xl mx-auto text-center reveal relative">
@@ -677,7 +650,7 @@
         </div>
     </section>
 
-    <section class="expert-section" id="expert">
+    <section class="expert-section scroll-mt-28" id="expert">
         <div class="container">
             <div class="expert-grid animate-on-scroll">
                 <div class="expert-info">
@@ -732,7 +705,7 @@
     </section>
 
     <!-- OFERTA FINAL -->
-    <section id="preço" class="py-24 px-6 relative">
+    <section id="preço" class="py-24 px-6 relative scroll-mt-28">
         <div class="max-w-4xl mx-auto text-center">
             <div class="bg-black border-2 border-red-600 rounded-[40px] p-8 md:p-16 relative overflow-hidden reveal">
                 <!-- Background decorativo -->
@@ -777,7 +750,7 @@
         </div>
     </section>
 
-    <section class="py-24 px-6 relative overflow-hidden bg-black border-y border-white/5" id="faq">
+    <section class="py-24 px-6 relative overflow-hidden bg-black border-y border-white/5 scroll-mt-28" id="faq">
         <div class="absolute -top-24 -left-24 w-72 h-72 bg-red-600/10 blur-[90px] rounded-full"></div>
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12 reveal">
@@ -866,6 +839,25 @@
                 <a href="#preço" class="inline-flex items-center justify-center gap-2 btn-glow bg-red-600 hover:bg-red-700 text-white font-black py-4 px-8 rounded-2xl transition-all uppercase tracking-widest text-sm sm:text-base">
                     EU ESCOLHO MUDAR AGORA
                     <i data-lucide="flame" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta scroll-mt-28" id="contato" aria-labelledby="cta-title">
+        <div class="container">
+            <div>
+                <h2 id="cta-title">Pronto para mudar sua vida?</h2>
+                <p>Sua melhor versão está a uma decisão de distância.</p>
+            </div>
+
+            <div class="final-actions">
+                <a class="btn" href="https://api.whatsapp.com/send?1=pt_BR&phone=5511976563187">
+                    FALAR NO WHATSAPP
+                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M5 12h14"></path>
+                        <path d="m13 6 6 6-6 6"></path>
+                    </svg>
                 </a>
             </div>
         </div>
@@ -962,9 +954,19 @@
         // Smooth scroll para âncoras
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (!href || href === '#') return;
+                let target;
+                try {
+                    target = document.querySelector(href);
+                } catch (err) {
+                    return;
+                }
+                if (!target) return;
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             });
         });
@@ -1054,28 +1056,6 @@
             btn.addEventListener('click', () => setJourneyWeek(btn.dataset.week));
         });
 
-        // Lógica do Slider Antes/Depois
-        const sliders = document.querySelectorAll('.ba-slider');
-        sliders.forEach(slider => {
-            const afterImage = slider.querySelector('.after-image');
-            const handle = slider.querySelector('.slider-handle');
-            
-            slider.addEventListener('mousemove', function(e) {
-                const sliderRect = slider.getBoundingClientRect();
-                const position = ((e.clientX - sliderRect.left) / sliderRect.width) * 100;
-                
-                afterImage.style.width = `${position}%`;
-                handle.style.left = `${position}%`;
-            });
-
-             slider.addEventListener('touchmove', function(e) {
-                const sliderRect = slider.getBoundingClientRect();
-                const position = ((e.touches[0].clientX - sliderRect.left) / sliderRect.width) * 100;
-                
-                afterImage.style.width = `${position}%`;
-                handle.style.left = `${position}%`;
-            });
-        });
     </script>
 </body>
 </html>
